@@ -19,10 +19,12 @@ char* binstring(int t_bits, long int number) {
     return b_string;
 }
 
-void lcs_bin(char *b_x, char *b_y, int n)
+int** lcs_bin(char *b_x, char *b_y, int n)
 {
-    int opt[n+1][n+1];
     int i,j;
+    int **opt = (int**)malloc((n+1)*sizeof(int*));
+    for(i=0;i<n+1;i++)
+        opt[i] = (int*)malloc((n+1)*sizeof(int));
     for(i=0;i<n+1;i++)
         opt[i][0] = 0;
     for(j=0;j<n+1;j++)
@@ -30,7 +32,7 @@ void lcs_bin(char *b_x, char *b_y, int n)
     for(i=1;i<n+1;i++)
         for(j=1;j<n+1;j++)
         {
-            if (b_x[i] == b_y[j])
+            if (b_x[i-1] == b_y[j-1])
                 opt[i][j] = opt[i-1][j-1] + 1;
             else
                 opt[i][j] = (opt[i][j-1] > opt[i-1][j])?opt[i][j-1]:opt[i-1][j];
@@ -41,12 +43,40 @@ void lcs_bin(char *b_x, char *b_y, int n)
             printf("%d  ",opt[i][j]);
         printf("\n");
     }
-    printf("The lcs is %d\n",opt[n][n]);
+    //printf("The lcs is %d\n",opt[n][n]);
+    return opt;
+}
+
+char* lcs_strings(char *b_x, char *b_y, int** opt_array, int n)
+{
+    int i,j;
+    i = j = n;
+    int len = opt_array[n][n];
+    int k = 0;
+    char *final_st = (char*)malloc(len+1);
+    while (i > 0 && j > 0)
+    {
+        if (b_x[i-1] == b_y[j-1])
+        {
+            final_st[len-k-1] = b_x[i-1];
+            //printf("Chars--%c", final_st[len-k-1]);
+            k++;
+            i--;
+            j--;
+            continue;
+        }
+        if (opt_array[i][j-1] >= opt_array[i-1][j])
+            j--;
+        else
+            i--;
+    }
+    final_st[len] = '\0';
+    return final_st;
 }
 
 int main()
 {
-    int n;
+    int n,i;
     long int x;
     long int y;
     printf("Enter n value: ");
@@ -58,11 +88,15 @@ int main()
     printf("Enter y value: ");
     scanf("%ld", &y);
     assert(y >= 0 && y <= (pow(2,n)-1));
-    //char bin_x[n+1], bin_y[n+1];
     char *bin_x, *bin_y;
+    int **opt;
     bin_x = binstring(n,x);
     bin_y = binstring(n,y);
-    lcs_bin(bin_x, bin_y, n);
+    opt = lcs_bin(bin_x, bin_y, n);
+    printf("VALUE IS --> %s\n",lcs_strings(bin_x, bin_y, opt, n));
+    for(i=0;i<n+1;i++)
+        free(opt[i]);
+    free(opt);
     free(bin_x);
     free(bin_y);
     return 0;
