@@ -1,14 +1,13 @@
-#include <stdio.h>
 #include <math.h>
 #include <assert.h>
 #include <string.h>
-#include <malloc.h>
 #include <iostream>
+using namespace std;
 #include <vector>
 #include <set>
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
-#define binArrSize 20
+#define ARRAYSIZE 21
 
 void binstring(char* bString, int n, int val){
     long int rmd = val;
@@ -24,7 +23,7 @@ void binstring(char* bString, int n, int val){
 }
 
 
-void setDpMtx(int dpMtx[binArrSize + 1][binArrSize + 1], const int n, char* xBinary, char* yBinary){
+void setDpMtx(int dpMtx[ARRAYSIZE][ARRAYSIZE], const int n, char* xBinary, char* yBinary){
     for(int i = 0; i <= n; i++){
         dpMtx[i][0] = 0;
         dpMtx[0][i] = 0;
@@ -42,23 +41,24 @@ void setDpMtx(int dpMtx[binArrSize + 1][binArrSize + 1], const int n, char* xBin
 class dfs{
     public:
         int lcsLen;
-        std::set<std::vector<char>> lcsSet;
+        set<vector<char>> lcsSet;
         dfs();
-        void setDfs(int x, int y, std::vector<char> lcsPath,
-            const int dpMtx[binArrSize + 1][binArrSize + 1],
+        void setDfs(int x, int y, vector<char> lcsPath,
+            const int dpMtx[ARRAYSIZE][ARRAYSIZE],
             const char* xBinary, const char* yBinary);
-        void addLcsSet(std::vector<char> lcsPath);
+        void addLcsSet(vector<char> lcsPath);
 };
 
 dfs::dfs(){}
 
-void dfs::addLcsSet(std::vector<char> lcsPath){
-    lcsSet.insert(lcsPath);
+void dfs::addLcsSet(vector<char> lcsPath){
+    if (lcsPath.size() > 0)
+        lcsSet.insert(lcsPath);
 }
 
-void dfs::setDfs(int x, int y, std::vector<char> lcsPath, const int dpMtx[binArrSize + 1][binArrSize + 1],
+void dfs::setDfs(int x, int y, vector<char> lcsPath, const int dpMtx[ARRAYSIZE][ARRAYSIZE],
         const char* xBinary, const char* yBinary)
-{ //, std::vector<std::string> lcsTraceback 
+{ 
     if(dpMtx[x][y] == 0){
         addLcsSet(lcsPath);
     }
@@ -81,29 +81,26 @@ int main()
     int n;
     long int x;
     long int y;
-    printf("Enter value of n in range [3:20] : ");
-    scanf("%d", &n);
+    cout<<"Enter value of n in range [3:20] : ";
+    cin>>n;
     assert(n >= 3 && n <= 20);
 
-    printf("Enter value of x in range [0:16383] : ");
-    scanf("%ld", &x);
+    cout<<"Enter value of x in range [0:1048575] : ";
+    cin>>x;
     assert(x >= 0 && x <= (pow(2, n)-1));
 
-    printf("Enter value of y in range [0:16383] : ");
-    scanf("%ld", &y);
+    cout<<"Enter value of y in range [0:1048575] : ";
+    cin>>y;
     assert(y >= 0 && y <= (pow(2,n)-1));
 
     // Convert to binary //
-    char xBinary[binArrSize + 1];
-    char yBinary[binArrSize + 1];
+    char xBinary[ARRAYSIZE];
+    char yBinary[ARRAYSIZE];
     binstring(xBinary, n, x);
-    binstring(yBinary, n, y); // have to pass a pointer array in, cannot create an array within the function and return it, because the pointer got destroyed when exit the function
-    // printf("binary string x is %s \n", xBinary);
-    // printf("binary string y is %s \n", yBinary);
-
+    binstring(yBinary, n, y); 
 
     // LCS //
-    int dpMtx[binArrSize + 1][binArrSize + 1];
+    int dpMtx[ARRAYSIZE][ARRAYSIZE];
     int lcsLen;
     std::set<std::vector<char>> lcsSet;
     setDpMtx(dpMtx, n, xBinary, yBinary);
@@ -117,21 +114,22 @@ int main()
     //     printf("\n");
     // }
     
-    std::vector<char> lcsPath(lcsLen);
+    vector<char> lcsPath(lcsLen);
 
     dfs _dfs; 
     _dfs.setDfs(n, n, lcsPath, dpMtx, xBinary, yBinary);
     
-    printf("** STRINGLEN %d: %d length-%d LCS's from X=(%d)=%s and Y=(%d)=%s\n",
-            n, _dfs.lcsSet.size(), lcsLen, x, xBinary, y, yBinary);
-    
+    cout<<"STRINGLEN "<<n<<endl;
+    cout<<"X: "<<x<<" Binary String: "<<xBinary<<endl;
+    cout<<"Y: "<<y<<" Binary String: "<<yBinary<<endl;
+    cout<<"LCS Length "<<lcsLen<<endl<<"No of Distinct LCS: "<<_dfs.lcsSet.size()<<endl;
 
     int lcsCnt = 1;
-    for(std::set<std::vector<char>>::iterator s_it=_dfs.lcsSet.begin(); s_it!=_dfs.lcsSet.end(); ++s_it){
-        printf("lcs  %d: ", lcsCnt);
-        for(std::vector<char>::const_iterator v_it = s_it->begin() ; v_it != s_it->end(); ++v_it)
-            printf("%c ", *v_it);
-        printf("\n");
+    for(set<vector<char>>::iterator s_it=_dfs.lcsSet.begin(); s_it!=_dfs.lcsSet.end(); ++s_it){
+        cout<<"lcs "<<lcsCnt<<": ";
+        for(vector<char>::const_iterator v_it = s_it->begin() ; v_it != s_it->end(); ++v_it)
+            cout<<*v_it;
+        cout<<endl;
         lcsCnt++;
     }
 
