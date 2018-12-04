@@ -41,7 +41,7 @@ void setDpMtx(int dpMtx[ARRAYSIZE][ARRAYSIZE], const int n, char* xBinary, char*
 class dfs{
     public:
         int lcsLen;
-        set<vector<char>> lcsSet;
+        set<vector<char> > lcsSet;
         dfs();
         void setDfs(int x, int y, vector<char> lcsPath,
             const int dpMtx[ARRAYSIZE][ARRAYSIZE],
@@ -102,7 +102,7 @@ int main()
     // LCS //
     int dpMtx[ARRAYSIZE][ARRAYSIZE];
     int lcsLen;
-    std::set<std::vector<char>> lcsSet;
+    std::set<std::vector<char> > lcsSet;
     setDpMtx(dpMtx, n, xBinary, yBinary);
     lcsLen = dpMtx[n][n];
 
@@ -125,7 +125,7 @@ int main()
     cout<<"LCS Length "<<lcsLen<<endl<<"No of Distinct LCS: "<<_dfs.lcsSet.size()<<endl;
 
     int lcsCnt = 1;
-    for(set<vector<char>>::iterator s_it=_dfs.lcsSet.begin(); s_it!=_dfs.lcsSet.end(); ++s_it){
+    for(set<vector<char> >::iterator s_it=_dfs.lcsSet.begin(); s_it!=_dfs.lcsSet.end(); ++s_it){
         cout<<"lcs "<<lcsCnt<<": ";
         for(vector<char>::const_iterator v_it = s_it->begin() ; v_it != s_it->end(); ++v_it)
             cout<<*v_it;
