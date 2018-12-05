@@ -41,6 +41,7 @@ void setDpMtx(int dpMtx[ARRAYSIZE][ARRAYSIZE], const int n, char* xBinary, char*
 class dfs{
     public:
         int lcsLen;
+        int mem_mtx[ARRAYSIZE][ARRAYSIZE];
         set<vector<char> > lcsSet;
         dfs();
         void setDfs(int x, int y, vector<char> lcsPath,
@@ -49,7 +50,11 @@ class dfs{
         void addLcsSet(vector<char> lcsPath);
 };
 
-dfs::dfs(){}
+dfs::dfs(){
+    for(int i=0;i<ARRAYSIZE;i++)
+        for(int j=0;j<ARRAYSIZE;j++)
+            mem_mtx[i][j] = 0;
+}
 
 void dfs::addLcsSet(vector<char> lcsPath){
     if (lcsPath.size() > 0)
@@ -59,6 +64,10 @@ void dfs::addLcsSet(vector<char> lcsPath){
 void dfs::setDfs(int x, int y, vector<char> lcsPath, const int dpMtx[ARRAYSIZE][ARRAYSIZE],
         const char* xBinary, const char* yBinary)
 { 
+    if (dfs::mem_mtx[x][y] == 1)
+        return;
+    if (dfs::mem_mtx[x][y] == 0)
+        mem_mtx[x][y] = 1;
     if(dpMtx[x][y] == 0){
         addLcsSet(lcsPath);
     }
@@ -107,12 +116,12 @@ int main()
     lcsLen = dpMtx[n][n];
 
     // print table //
-    // for(int j = 0; j <= n; j++){
-    //     for(int i = 0; i <= n; i++){
-    //         printf("%d\t", dpMtx[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+     for(int j = 0; j <= n; j++){
+         for(int i = 0; i <= n; i++){
+             printf("%d\t", dpMtx[i][j]);
+         }
+         printf("\n");
+     }
     
     vector<char> lcsPath(lcsLen);
 
